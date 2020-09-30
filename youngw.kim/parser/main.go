@@ -3,27 +3,16 @@ package main
 import (
 	"bufio"
 	"fmt"
-	//"io/ioutil"
 	"os"
 	"strings"
 )
 
 func main() {
-	//reader := bufio.NewReader(os.Stdin)
 	request := [2]int{0}
 	fmt.Println("input your log file Name")
-	//logFileName, _ := reader.ReadString('\n')
-	//logFileName = "C:/Go/src/github.com/youngw.kim/parser/" + logFileName
 	logFileName := "testLog.log"
 	fmt.Println("input file name is", logFileName)
 
-	/*
-		dat, err := ioutil.ReadFile(logFileName)
-		if err != nil {
-			fmt.Print("ioutil has been an error!: ", err)
-		}
-		fmt.Println(dat)
-	*/
 	f, err := os.Open(logFileName)
 	if err != nil {
 		fmt.Print("There has been an error!: ", err)
