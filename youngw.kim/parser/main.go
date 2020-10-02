@@ -26,12 +26,16 @@ func main() {
 	//Alogs := []log_type_A{}
 	//Blogs := []log_type_B{}
 
-	for scanner.Scan() {
+	for scanner.Scan() { // read file per line
 		if strings.Contains(scanner.Text(), "FIRST_CASE_PARSING_MSG") {
 			request[0]++
-			nowIndex := strings.IndexAny(scanner.Text(), ":")
-			fmt.Println(nowIndex)
+			//nowIndex := strings.IndexAny(scanner.Text(), "[")
+			//fmt.Println(nowIndex)
 			fmt.Println(scanner.Text())
+			res := strings.Split(scanner.Text(), " ")
+			for _, value := range res {
+				fmt.Println(value)
+			}
 			//fmt.Println((strings.Split(scanner.Text(), ":")))
 
 		} else if strings.Contains(scanner.Text(), "SECOND_CASE_PARSING_MSG") {
