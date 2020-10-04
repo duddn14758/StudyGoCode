@@ -1,5 +1,13 @@
 {
     "go.gotoSymbol.includeImports": true,
     "go.formatTool": "gofmt",
-    "go.autocompleteUnimportedPackages": true
+    "go.autocompleteUnimportedPackages": true,
+    "go.gopath": "${workspaceFolder}",
+    "go.inferGopath": false,
+    "terminal.integrated.env.windows": {
+        "GOPATH": "${workspaceFolder}" // windows 에서 vscode 프로그램 내 터미널을 GOPATH 환경 변수 변경
+    },
+    "terminal.integrated.env.osx": {
+        "GOPATH": "${workspaceFolder}" // osx 에서 vscode 프로그램 내 터미널을 GOPATH 환경 변수 변경
+    },
 }

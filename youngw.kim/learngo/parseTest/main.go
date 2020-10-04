@@ -2,16 +2,13 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	//"strings"
 )
 
 func main() {
-	s := "Hello Hi Anyeong"
-	fmt.Println(s)
+	var s1 string
+	var num int
+	fmt.Scan(&num, &s1)
 
-	res1 := strings.Split(s, " ")
-	fmt.Println(res1)
-
-	res2 := strings.SplitAfter(s, " ")
-	fmt.Println(res2)
+	fmt.Println(num, s1)
 }
