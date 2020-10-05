@@ -50,7 +50,7 @@ func Split(r rune) bool {
 func (l *Log_type_AA) setLogTypeA(logA string) {
 	strings.TrimPrefix(logA, LOG_TYPES[0])
 	res := strings.FieldsFunc(logA, Split)
-	fmt.Println(res)
+	fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@", res)
 	for i, val := range res {
 		fmt.Printf("    val2[%d]: %s\n", i, val)
 		switch i {
@@ -79,13 +79,16 @@ func (l *First_case_log) SetVal(LogF string) {
 		for j, val2 := range res1 {
 			fmt.Printf("  val2[%d]: %s\n", j, val2)
 		}
-		switch i {
-		case 0:
-			l.LogA.setLogTypeA(value)
-			break
-		case 1:
-			break
-		}
+		l.LogA.setLogTypeA(value)
+
+		/*
+			switch i {
+			case 0:
+				l.LogA.setLogTypeA(value)
+				break
+			case 1:
+				break
+			}*/
 		fmt.Println("  val2:", l.LogA)
 	}
 }
