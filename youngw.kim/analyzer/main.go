@@ -36,14 +36,16 @@ func main() {
 			}
 			//fmt.Println(strconv.ParseFloat(res[1], 64))
 			tp[index], _ = strconv.ParseFloat(res[1], 64)
-			//tp = append(strconv.ParseFloat(res[1], 64), index)
+			//tp = append(tp, strconv.ParseFloat(res[1], 64))
 
 			if strings.Compare(res[2], "Mbps") == 0 {
 				tp[index] *= 0.001
 			}
 			avg += tp[index]
 
-			index++
+			if tp[index] < 10 {
+				index++
+			}
 		}
 	}
 	for i := 0; i < index; i++ {
