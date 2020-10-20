@@ -8,12 +8,18 @@ import (
 
 var errRequestFailed = errors.New("Request failed")
 
+type resultRequest struct {
+	url    string
+	status string
+}
+
 func main() {
 	// 초기화 되지 않은 map에는 인자를 추가시킬 수 없다.
 	//var results = map[string]string{}
 	//var results = make(map[string]string)
 
-	c := make(chan string)
+	//results := make(map[string]string)
+	c := make(chan resultRequest)
 
 	urls := []string{
 		"https://www.naver.com",
@@ -38,18 +44,23 @@ func main() {
 	//time.Sleep(time.Second * 10)
 
 	for range urls {
-		fmt.Println(<-c)
+		result := <-c
+		fmt.Println(result)
+		//fmt.Println(<-c)
 		//fmt.Println(url, result)
 	}
 }
 
-func hitUrl(url string, c chan string) error {
+func hitUrl(url string, c chan<- resultRequest) error { // chan<- : send only (cannot receive)
 	fmt.Println("CHECKING :", url)
+	// fmt.Println(<-c)  // like this
 	resp, err := http.Get(url)
 	if err != nil || resp.StatusCode >= 400 {
-		c <- "FAILED"
-		return errRequestFailed
+		c <- resultRequest{url: url, status: "FAIULRE"}
+		//c <- "FAILED"
+		//return errRequestFailed
 	}
-	c <- url + " OK"
+	//c <- url + " OK"
+	c <- resultRequest{url: url, status: "OK"}
 	return nil
 }
