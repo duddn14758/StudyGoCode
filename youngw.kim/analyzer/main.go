@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
-type log_tp struct {
-	time string
-	tp   float64
+type monitorLog struct {
+	time     string
+	tp       float64
+	ddds_scg int
+	ddds_mcg int
 }
 
 func standardizeSpaces(s string) string {
@@ -25,8 +26,7 @@ func main() {
 	var logFileName string
 	index := 0
 	avg := 0.0
-
-	log := [100]log_tp{}
+	log := [100]monitorLog{}
 
 	//tp := [100]float64{}
 	//fmt.Scan(&logFileName)
@@ -51,13 +51,21 @@ func main() {
 			}
 			res_tp := strings.Split(standardizeSpaces(scanner.Text()), " ")
 
-			log[index].tp, _ = strconv.ParseFloat(res_tp[10], 64)
-
-			if strings.Compare(res_tp[11], "Mbps") == 0 {
-				log[index].tp *= 0.001
-			} else if strings.Compare(res_tp[11], "Kbps") == 0 {
-				log[index].tp *= 0.000001
+			for idx, _ := range res_tp {
+				fmt.Printf("res_tp[%d] : %s\n", idx, res_tp[idx])
 			}
+
+			fmt.Println(res_tp)
+
+			//log[index].tp, _ = strconv.ParseFloat(res_tp[10], 64)
+
+			/*
+				if strings.Compare(res_tp[11], "Mbps") == 0 {
+					log[index].tp *= 0.001
+				} else if strings.Compare(res_tp[11], "Kbps") == 0 {
+					log[index].tp *= 0.000001
+				}
+			*/
 			avg += log[index].tp
 
 			if log[index].tp < 10 {
