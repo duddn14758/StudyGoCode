@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -43,35 +44,33 @@ func main() {
 			// parsing time val
 			res_time := strings.FieldsFunc(scanner.Text(), splitTimeCase)
 			log[index].time = res_time[1]
+		} else if strings.Contains(scanner.Text(), "Dowlink RX") {
 
-			// parsing throughput val
-			if scanner.Scan() != true {
-				fmt.Println("No more lines")
-				break
-			}
 			res_tp := strings.Split(standardizeSpaces(scanner.Text()), " ")
+
+			log[index].tp, _ = strconv.ParseFloat(res_tp[10], 64)
 
 			for idx, _ := range res_tp {
 				fmt.Printf("res_tp[%d] : %s\n", idx, res_tp[idx])
 			}
 
 			fmt.Println(res_tp)
+			log[index].tp, _ = strconv.ParseFloat(res_tp[10], 64)
 
-			//log[index].tp, _ = strconv.ParseFloat(res_tp[10], 64)
+			if strings.Compare(res_tp[11], "Mbps") == 0 {
+				log[index].tp *= 0.001
+			} else if strings.Compare(res_tp[11], "Kbps") == 0 {
+				log[index].tp *= 0.000001
+			}
 
-			/*
-				if strings.Compare(res_tp[11], "Mbps") == 0 {
-					log[index].tp *= 0.001
-				} else if strings.Compare(res_tp[11], "Kbps") == 0 {
-					log[index].tp *= 0.000001
-				}
-			*/
 			avg += log[index].tp
 
 			if log[index].tp < 10 {
 				index++
 			}
+
 		}
+
 	}
 	for i := 0; i < index; i++ {
 		fmt.Printf("%s %0.3fGbps\n", log[i].time, log[i].tp)
