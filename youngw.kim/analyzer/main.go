@@ -10,7 +10,10 @@ import (
 
 type monitorLog struct {
 	time              string
-	tp                float64
+	scg_tp            float64
+	mcg_tp            float64
+	total_tp          float64
+	fresh_buffer      int
 	desired_octet_scg int
 	desired_octet_mcg int
 	ddds_scg          int
@@ -25,10 +28,32 @@ func splitTimeCase(r rune) bool {
 	return r == ' ' || r == '.'
 }
 
+func bitAliasMbps(unit string, tp float64) float64 {
+	if strings.Compare(unit, "Gbps") == 0 {
+		tp *= 1000
+	} else if strings.Compare(unit, "Kbps") == 0 {
+		tp *= 0.001
+	} else if strings.Compare(unit, "bps") == 0 {
+		tp = 0
+	}
+	return tp
+}
+
+func bitAliasGbps(unit string, tp float64) float64 {
+	if strings.Compare(unit, "Mbps") == 0 {
+		tp *= 0.001
+	} else if strings.Compare(unit, "Kbps") == 0 {
+		tp *= 0.000001
+	} else if strings.Compare(unit, "bps") == 0 {
+		tp = 0
+	}
+	return tp
+}
+
 func main() {
 	var logFileName string
 	index := 0
-	avg := 0.0
+	avg_total := 0.0
 	log := [100]monitorLog{}
 
 	//tp := [100]float64{}
@@ -62,30 +87,29 @@ func main() {
 
 			res_tp := strings.Split(standardizeSpaces(scanner.Text()), " ")
 
-			log[index].tp, _ = strconv.ParseFloat(res_tp[10], 64)
+			log[index].total_tp, _ = strconv.ParseFloat(res_tp[10], 64)
 
-			log[index].tp, _ = strconv.ParseFloat(res_tp[10], 64)
+			log[index].total_tp = bitAliasMbps(res_tp[11], log[index].total_tp)
 
-			if strings.Compare(res_tp[11], "Mbps") == 0 {
-				log[index].tp *= 0.001
-			} else if strings.Compare(res_tp[11], "Kbps") == 0 {
-				log[index].tp *= 0.000001
-			} else if strings.Compare(res_tp[11], "bps") == 0 {
-				log[index].tp = 0
-			}
+			avg_total += log[index].total_tp
 
-			avg += log[index].tp
+		} else if strings.Contains(scanner.Text(), "SCG TX") {
+			res_tp := strings.Split(standardizeSpaces(scanner.Text()), " ")
 
-			if log[index].tp < 10 {
-				index++
-			}
+			log[index].scg_tp, _ = strconv.ParseFloat(res_tp[4], 64)
+			log[index].mcg_tp, _ = strconv.ParseFloat(res_tp[10], 64)
 
+			log[index].scg_tp = bitAliasMbps(res_tp[5], log[index].scg_tp)
+			log[index].mcg_tp = bitAliasMbps(res_tp[11], log[index].mcg_tp)
+
+			index++
 		}
 
 	}
+	fmt.Println("    time | desired_scg | desired_mcg | ddds_scg | ddds_mcg | scg_tp | mcg_tp")
 	for i := 0; i < index; i++ {
-		fmt.Printf("time : %s\n desired_scg : %d desired_mcg : %d\n ddds_scg : %d ddds_mcg : %d\n  tp : %0.2fMbps\n-----------------\n",
-			log[i].time, log[i].desired_octet_scg, log[i].desired_octet_mcg, log[i].ddds_scg, log[i].ddds_mcg, log[i].tp)
+		fmt.Printf("%s  %12d  %12d   %8d   %8d   %6.2f   %6.2f\n",
+			log[i].time, log[i].desired_octet_scg, log[i].desired_octet_mcg, log[i].ddds_scg, log[i].ddds_mcg, log[i].scg_tp, log[i].mcg_tp)
 	}
-	fmt.Printf("avg : %05.2fMbps\n", float64(avg)/float64(index))
+	fmt.Printf("avg_total : %05.2fMbps\n", float64(avg_total)/float64(index))
 }
