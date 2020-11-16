@@ -50,6 +50,15 @@ func bitAliasGbps(unit string, tp float64) float64 {
 	return tp
 }
 
+func getIndexByString(idx int, res []string, find string) int {
+	for idx, _ = range res {
+		if strings.Compare(res[idx], find) == 0 {
+			return idx + 2
+		}
+	}
+	return -1
+}
+
 func main() {
 	var logFileName string
 	index := 0
@@ -73,6 +82,11 @@ func main() {
 			log[index].time = res_time[1]
 		} else if strings.Contains(scanner.Text(), "DDDS Count") {
 			res_ddds := strings.Split(standardizeSpaces(scanner.Text()), " ")
+
+			first_idx := getIndexByString(0, res_ddds, "Count")
+			second_idx := getIndexByString(first_idx, res_ddds, "Count")
+
+			fmt.Println("first, second idx :", first_idx, second_idx)
 
 			log[index].desired_octet_scg, _ = strconv.Atoi(res_ddds[4])
 			log[index].desired_octet_mcg, _ = strconv.Atoi(res_ddds[9])
@@ -106,10 +120,18 @@ func main() {
 		}
 
 	}
+
+	wf, err := os.Create("result.txt")
+
 	fmt.Println("    time | desired_scg | desired_mcg | ddds_scg | ddds_mcg | scg_tp | mcg_tp")
+	fmt.Fprintf(wf, "time desired_scg desired_mcg ddds_scg ddds_mcg scg_tp mcg_tp\n")
+
 	for i := 0; i < index; i++ {
 		fmt.Printf("%s  %12d  %12d   %8d   %8d   %6.2f   %6.2f\n",
 			log[i].time, log[i].desired_octet_scg, log[i].desired_octet_mcg, log[i].ddds_scg, log[i].ddds_mcg, log[i].scg_tp, log[i].mcg_tp)
+		fmt.Fprintf(wf, "%s %d %d %d %d %.2f %2f\n",
+			log[i].time, log[i].desired_octet_scg, log[i].desired_octet_mcg, log[i].ddds_scg, log[i].ddds_mcg, log[i].scg_tp, log[i].mcg_tp)
+
 	}
 	fmt.Printf("avg_total : %05.2fMbps\n", float64(avg_total)/float64(index))
 }
