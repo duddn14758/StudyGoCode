@@ -51,7 +51,7 @@ func bitAliasGbps(unit string, tp float64) float64 {
 }
 
 func getIndexByString(idx int, res []string, find string) int {
-	for idx, _ = range res {
+	for idx := idx; idx < len(res); idx++ {
 		if strings.Compare(res[idx], find) == 0 {
 			return idx + 2
 		}
@@ -60,7 +60,12 @@ func getIndexByString(idx int, res []string, find string) int {
 }
 
 func main() {
-	var logFileName string
+	if len(os.Args) < 1 {
+		panic("please write file name")
+	}
+	//_ = os.Args[1:]
+	logFileName := os.Args[1]
+	//var logFileName string
 	index := 0
 	avg_total := 0.0
 	log := [100]monitorLog{}
@@ -118,7 +123,6 @@ func main() {
 
 			index++
 		}
-
 	}
 
 	wf, err := os.Create("result.txt")
@@ -129,7 +133,7 @@ func main() {
 	for i := 0; i < index; i++ {
 		fmt.Printf("%s  %12d  %12d   %8d   %8d   %6.2f   %6.2f\n",
 			log[i].time, log[i].desired_octet_scg, log[i].desired_octet_mcg, log[i].ddds_scg, log[i].ddds_mcg, log[i].scg_tp, log[i].mcg_tp)
-		fmt.Fprintf(wf, "%s %d %d %d %d %.2f %2f\n",
+		fmt.Fprintf(wf, "%s %d %d %d %d %.2f %.2f\n",
 			log[i].time, log[i].desired_octet_scg, log[i].desired_octet_mcg, log[i].ddds_scg, log[i].ddds_mcg, log[i].scg_tp, log[i].mcg_tp)
 
 	}
